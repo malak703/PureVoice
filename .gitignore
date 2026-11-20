@@ -1,0 +1,8 @@
+.venv/
+data/
+__pycache__/
+node_modules/
+.next/
+*.tsbuildinfo
+*.log
+.npm-cache/
