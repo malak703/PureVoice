@@ -27,6 +27,20 @@ npm.cmd run dev --prefix frontend
 
 Open [the local studio](http://127.0.0.1:3000) and upload an MP3 or WAV, or choose **YouTube link**. The first conversion downloads the official ~84 MB HTDemucs checkpoint. FFmpeg comes from the Python dependency and can be overridden with `PUREVOICE_FFMPEG`. YouTube import uses yt-dlp with Node.js and needs internet access. YouTube can restrict downloads of particular videos or networks. Use audio you are authorized to process.
 
+## Deploy the frontend to Vercel
+
+Import the GitHub repository and select the Next.js preset with `frontend` as the root directory. Select Node.js 24.x, set the install command to `npm ci` and the build command to `npm run build`, and leave the output directory at its default.
+
+Set `PUREVOICE_API_URL` in Production and Preview to the HTTPS base URL of your deployed FastAPI server, for example `https://api.example.com`. Enter the origin without an `/api` suffix and redeploy after changing it. Next.js forwards browser requests under `/api` to this server.
+
+Run the audio backend on a long-running host with Python 3.13 and Node.js for YouTube imports. Install `backend/requirements.txt` with the CPU PyTorch index shown above. Start one API worker from the repository root:
+
+```sh
+python -m uvicorn backend.api:app --host 0.0.0.0 --port "${PORT:-8000}"
+```
+
+Set `PUREVOICE_DATA` and `TORCH_HOME` to writable directories on the backend host, preferably on a persistent volume. After deployment, open `/api/health` on the Vercel domain and check for `{"status":"ok"}`.
+
 ## Use the studio
 
 - Choose an audio source between 1 second and 10 minutes, up to 80 MB.
